@@ -1,8 +1,3 @@
-import numpy as np
-import pandas as pd
-import sklearn as sk
-
-print("Machine Learning group")
-
-print("shubham")
-print("dublin")
+import numpy
+import pandas
+import sklearn
