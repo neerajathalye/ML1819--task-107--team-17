@@ -24,12 +24,17 @@ def split_data():
     x_test.to_csv('../output-data/test_rows.csv', index=None, header=True)
     return x_train, x_test
 
-def encode_class_labels(train_rows, test_rows, df):
+def encode_class_labels_train(df):
     encoder = LabelEncoder()
-    y_train = encoder.fit_transform(df.ix[train_rows, "gender"])
-    y_test = encoder.transform(df.ix[test_rows, "gender"])
+    y_train = encoder.fit_transform(df["gender"])
 
-    return y_train, y_test, encoder.classes_
+    return y_train, encoder.classes_
+
+def encode_class_labels_test(df):
+    encoder = LabelEncoder()
+    y_test = encoder.transform(df["gender"])
+
+    return y_test, encoder.classes_
 
 def normalize_text(text):
     # Remove non-ASCII chars.
