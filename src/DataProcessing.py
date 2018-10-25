@@ -156,7 +156,7 @@ def print_results(y_true, y, X, data_set_name, class_names):
 def report_results(grid_search, y_train, X_train, y_test, X_test, class_names):
     print("Best params: ", grid_search.best_params_)
     print_results(grid_search.predict(X_train), y_train, X_train, "Train", class_names)
-    print_results(grid_search.predict(X_test), y_test, X_test, "Train", class_names)
+    print_results(grid_search.predict(X_test), y_test, X_test, "Test", class_names)
 
 
 df = load_data()
