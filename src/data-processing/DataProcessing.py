@@ -119,7 +119,7 @@ def extract_feats_from_name(df):
     vectorizer = CountVectorizer()
     vectorizer = vectorizer.fit(df["name_norm"])
 
-    X = compute_text_feats(vectorizer, df)
+    X = compute_name_feats(vectorizer, df)
 
     return X
 
@@ -131,7 +131,7 @@ def extract_feats_from_name(df):
 #     vectorizer = CountVectorizer()
 #     vectorizer = vectorizer.fit(df["name_norm"])
 #
-#     X_train = compute_text_feats_test(vectorizer, df)
+#     X_train = compute_name_feats_test(vectorizer, df)
 #
 #     return X_train
 
