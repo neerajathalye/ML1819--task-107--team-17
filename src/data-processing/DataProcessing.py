@@ -1,7 +1,7 @@
 import re
+import os.path
 import numpy as np
 import pandas as pd
-from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.preprocessing import LabelEncoder
@@ -10,22 +10,26 @@ from sklearn.metrics import accuracy_score
 from sklearn.feature_extraction.text import CountVectorizer
 
 DATA_DIR = "data"
+# print(os.getcwd())
+dataset_path = os.path.join(os.path.dirname(os.path.dirname(os.getcwd())), 'dataset\\gender-classifier-DFE-791531.csv')
+test_rows_path = os.path.join(os.path.dirname(os.path.dirname(os.getcwd())), 'output-data\\test_rows.csv')
+train_rows_path = os.path.join(os.path.dirname(os.path.dirname(os.getcwd())), 'output-data\\train_rows.csv')
 
 
 def load_data():
-    return pd.read_csv("../dataset/gender-classifier-DFE-791531.csv", encoding='latin1')
+    # print(dataset_path)
+    return pd.read_csv(dataset_path, encoding='latin1')
 
 def split_data():
-    data = pd.read_csv("../dataset/gender-classifier-DFE-791531.csv", encoding='latin1')
+
+    data = pd.read_csv(dataset_path, encoding='latin1')
     array = ['male', 'female']
     data1 = data.loc[(data['gender:confidence'] == 1) & data['gender'].isin(array)]
 
-    for rows in data1:
+    x_train, x_test = train_test_split(data1, test_size=0.2)
 
-        x_train, x_test = train_test_split(data1, test_size=0.2)
-
-    x_train.to_csv('../output-data/train_rows.csv', index=None, header=True)
-    x_test.to_csv('../output-data/test_rows.csv', index=None, header=True)
+    x_train.to_csv(train_rows_path, index=None, header=True)
+    x_test.to_csv(test_rows_path, index=None, header=True)
     return x_train, x_test
 
 def encode_class_labels_train(df):
@@ -63,6 +67,13 @@ def compute_text_feats_test(vectorizer, df):
 def compute_text_feats_train(vectorizer, df):
     return vectorizer.transform(df["text_norm"])
 
+def compute_name_feats_test(vectorizer, df):
+    return vectorizer.transform(df["name"])
+
+
+def compute_name_feats_train(vectorizer, df):
+    return vectorizer.transform(df["name"])
+
 
 def compute_text_desc_feats_test(vectorizer, df):
     train_text = df["text_norm"]
@@ -80,7 +91,7 @@ def compute_text_desc_feats_train(vectorizer, df):
 
 def extract_feats_from_text_test(df):
     df["text_norm"] = [normalize_text(text) for text in df["text"]]
-    df["description_norm"] = [normalize_text(text) for text in df["description"].fillna("")]
+    # df["description_norm"] = [normalize_text(text) for text in df["description"].fillna("")]
 
     vectorizer = CountVectorizer()
     vectorizer = vectorizer.fit(df["text_norm"])
@@ -92,10 +103,33 @@ def extract_feats_from_text_test(df):
 
 def extract_feats_from_text_train(df):
     df["text_norm"] = [normalize_text(text) for text in df["text"]]
-    df["description_norm"] = [normalize_text(text) for text in df["description"].fillna("")]
+    # df["description_norm"] = [normalize_text(text) for text in df["description"].fillna("")]
 
     vectorizer = CountVectorizer()
     vectorizer = vectorizer.fit(df["text_norm"])
+
+    X_train = compute_text_feats_test(vectorizer, df)
+
+    return X_train
+
+def extract_feats_from_name_test(df):
+    df["name_norm"] = [normalize_text(text) for text in df["name"]]
+    # df["description_norm"] = [normalize_text(text) for text in df["description"].fillna("")]
+
+    vectorizer = CountVectorizer()
+    vectorizer = vectorizer.fit(df["name_norm"])
+
+    X_test = compute_text_feats_test(vectorizer, df)
+
+    return X_test
+
+
+def extract_feats_from_name_train(df):
+    df["name_norm"] = [normalize_text(text) for text in df["name"]]
+    # df["description_norm"] = [normalize_text(text) for text in df["description"].fillna("")]
+
+    vectorizer = CountVectorizer()
+    vectorizer = vectorizer.fit(df["name_norm"])
 
     X_train = compute_text_feats_test(vectorizer, df)
 
@@ -145,7 +179,7 @@ def extract_tweet_count_feats_train(df):
 
     return (scaler.transform(feats_train))
 
-def print_results(y_true, y, X, data_set_name, class_names):
+def print_results(y_true, y, data_set_name, class_names):
     print(data_set_name)
     print(classification_report(y, y_true, target_names=class_names))
     print("Accuracy: {}".format(accuracy_score(y, y_true)))
@@ -155,8 +189,8 @@ def print_results(y_true, y, X, data_set_name, class_names):
 
 def report_results(grid_search, y_train, X_train, y_test, X_test, class_names):
     print("Best params: ", grid_search.best_params_)
-    print_results(grid_search.predict(X_train), y_train, X_train, "Train", class_names)
-    print_results(grid_search.predict(X_test), y_test, X_test, "Test", class_names)
+    print_results(grid_search.predict(X_train), y_train, "Train", class_names)
+    print_results(grid_search.predict(X_test), y_test, "Test", class_names)
 
 
 df = load_data()
