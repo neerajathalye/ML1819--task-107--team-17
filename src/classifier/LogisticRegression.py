@@ -1,7 +1,7 @@
 import pandas as pd
-import os.path
 import matplotlib.pyplot as plt
 import seaborn as sns
+import os.path
 
 plt.rc("font", size=14)
 sns.set(style="white")
