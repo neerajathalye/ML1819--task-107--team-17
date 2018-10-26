@@ -76,10 +76,10 @@ def compute_name_feats(vectorizer, df):
 
 
 def compute_text_desc_feats(vectorizer, df):
-    train_text = df["text_norm"]
-    train_desc = df["description_norm"]
+    text = df["text_norm"]
+    desc = df["description_norm"]
 
-    return vectorizer.transform(train_text.str.cat(train_desc, sep=' '))
+    return vectorizer.transform(text.str.cat(desc, sep=' '))
 
 
 # def compute_text_desc_feats_train(vectorizer, df):
@@ -141,9 +141,9 @@ def extract_feats_from_text_and_desc(df):
     df["description_norm"] = [normalize_text(text) for text in df["description"].fillna("")]
 
     vectorizer = CountVectorizer()
-    train_text = df["text_norm"]
-    train_desc = df["description_norm"]
-    vectorizer = vectorizer.fit(train_text.str.cat(train_desc, sep=' '))
+    text = df["text_norm"]
+    desc = df["description_norm"]
+    vectorizer = vectorizer.fit(text.str.cat(desc, sep=' '))
 
     X = compute_text_desc_feats(vectorizer, df)
 
