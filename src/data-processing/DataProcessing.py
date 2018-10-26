@@ -9,7 +9,7 @@ from sklearn.metrics import classification_report
 from sklearn.metrics import accuracy_score
 from sklearn.feature_extraction.text import CountVectorizer
 
-DATA_DIR = "data"
+# DATA_DIR = "data"
 # print(os.getcwd())
 dataset_path = os.path.join(os.path.dirname(os.path.dirname(os.getcwd())), 'dataset\\gender-classifier-DFE-791531.csv')
 test_rows_path = os.path.join(os.path.dirname(os.path.dirname(os.getcwd())), 'output-data\\test_rows.csv')
@@ -32,17 +32,17 @@ def split_data():
     x_test.to_csv(test_rows_path, index=None, header=True)
     return x_train, x_test
 
-def encode_class_labels_train(df):
+def encode_class_labels(df):
     encoder = LabelEncoder()
-    y_train = encoder.fit_transform(df["gender"])
+    y = encoder.fit_transform(df["gender"])
 
-    return y_train, encoder.classes_
+    return y, encoder.classes_
+#
+# def encode_class_labels_test(df):
+#     encoder = LabelEncoder()
+#     y_test = encoder.transform(df["gender"])
 
-def encode_class_labels_test(df):
-    encoder = LabelEncoder()
-    y_test = encoder.transform(df["gender"])
-
-    return y_test, encoder.classes_
+    # return y_test, encoder.classes_
 
 def normalize_text(text):
     # Remove non-ASCII chars.
@@ -60,83 +60,83 @@ def normalize_text(text):
     return text
 
 
-def compute_text_feats_test(vectorizer, df):
+def compute_text_feats(vectorizer, df):
     return vectorizer.transform(df["text_norm"])
 
 
-def compute_text_feats_train(vectorizer, df):
-    return vectorizer.transform(df["text_norm"])
+# def compute_text_feats_train(vectorizer, df):
+#     return vectorizer.transform(df["text_norm"])
 
-def compute_name_feats_test(vectorizer, df):
+def compute_name_feats(vectorizer, df):
     return vectorizer.transform(df["name"])
 
 
-def compute_name_feats_train(vectorizer, df):
-    return vectorizer.transform(df["name"])
+# def compute_name_feats_train(vectorizer, df):
+#     return vectorizer.transform(df["name"])
 
 
-def compute_text_desc_feats_test(vectorizer, df):
+def compute_text_desc_feats(vectorizer, df):
     train_text = df["text_norm"]
     train_desc = df["description_norm"]
 
     return vectorizer.transform(train_text.str.cat(train_desc, sep=' '))
 
 
-def compute_text_desc_feats_train(vectorizer, df):
-    train_text = df["text_norm"]
-    train_desc = df["description_norm"]
+# def compute_text_desc_feats_train(vectorizer, df):
+#     train_text = df["text_norm"]
+#     train_desc = df["description_norm"]
+#
+#     return vectorizer.transform(train_text.str.cat(train_desc, sep=' '))
 
-    return vectorizer.transform(train_text.str.cat(train_desc, sep=' '))
 
-
-def extract_feats_from_text_test(df):
+def extract_feats_from_text(df):
     df["text_norm"] = [normalize_text(text) for text in df["text"]]
     # df["description_norm"] = [normalize_text(text) for text in df["description"].fillna("")]
 
     vectorizer = CountVectorizer()
     vectorizer = vectorizer.fit(df["text_norm"])
 
-    X_test = compute_text_feats_test(vectorizer, df)
+    X = compute_text_feats(vectorizer, df)
 
-    return X_test
+    return X
 
 
-def extract_feats_from_text_train(df):
-    df["text_norm"] = [normalize_text(text) for text in df["text"]]
-    # df["description_norm"] = [normalize_text(text) for text in df["description"].fillna("")]
+# def extract_feats_from_text_train(df):
+#     df["text_norm"] = [normalize_text(text) for text in df["text"]]
+#     # df["description_norm"] = [normalize_text(text) for text in df["description"].fillna("")]
+#
+#     vectorizer = CountVectorizer()
+#     vectorizer = vectorizer.fit(df["text_norm"])
+#
+#     X_train = compute_text_feats_test(vectorizer, df)
+#
+#     return X_train
 
-    vectorizer = CountVectorizer()
-    vectorizer = vectorizer.fit(df["text_norm"])
-
-    X_train = compute_text_feats_test(vectorizer, df)
-
-    return X_train
-
-def extract_feats_from_name_test(df):
+def extract_feats_from_name(df):
     df["name_norm"] = [normalize_text(text) for text in df["name"]]
     # df["description_norm"] = [normalize_text(text) for text in df["description"].fillna("")]
 
     vectorizer = CountVectorizer()
     vectorizer = vectorizer.fit(df["name_norm"])
 
-    X_test = compute_text_feats_test(vectorizer, df)
+    X = compute_text_feats(vectorizer, df)
 
-    return X_test
-
-
-def extract_feats_from_name_train(df):
-    df["name_norm"] = [normalize_text(text) for text in df["name"]]
-    # df["description_norm"] = [normalize_text(text) for text in df["description"].fillna("")]
-
-    vectorizer = CountVectorizer()
-    vectorizer = vectorizer.fit(df["name_norm"])
-
-    X_train = compute_text_feats_test(vectorizer, df)
-
-    return X_train
+    return X
 
 
-def extract_feats_from_text_and_desc_test(df):
+# def extract_feats_from_name_train(df):
+#     df["name_norm"] = [normalize_text(text) for text in df["name"]]
+#     # df["description_norm"] = [normalize_text(text) for text in df["description"].fillna("")]
+#
+#     vectorizer = CountVectorizer()
+#     vectorizer = vectorizer.fit(df["name_norm"])
+#
+#     X_train = compute_text_feats_test(vectorizer, df)
+#
+#     return X_train
+
+
+def extract_feats_from_text_and_desc(df):
     df["text_norm"] = [normalize_text(text) for text in df["text"]]
     df["description_norm"] = [normalize_text(text) for text in df["description"].fillna("")]
 
@@ -145,39 +145,39 @@ def extract_feats_from_text_and_desc_test(df):
     train_desc = df["description_norm"]
     vectorizer = vectorizer.fit(train_text.str.cat(train_desc, sep=' '))
 
-    X_test = compute_text_desc_feats_test(vectorizer, df)
+    X = compute_text_desc_feats(vectorizer, df)
 
-    return X_test
-
-
-def extract_feats_from_text_and_desc_train(df):
-    df["text_norm"] = [normalize_text(text) for text in df["text"]]
-    df["description_norm"] = [normalize_text(text) for text in df["description"].fillna("")]
-
-    vectorizer = CountVectorizer()
-    train_text = df["text_norm"]
-    train_desc = df["description_norm"]
-    vectorizer = vectorizer.fit(train_text.str.cat(train_desc, sep=' '))
-
-    X_train = compute_text_desc_feats_test(vectorizer, df)
-
-    return X_train
+    return X
 
 
-def extract_tweet_count_feats_test(df):
-    feats_test = df[["retweet_count", "tweet_count", "fav_number"]]
+# def extract_feats_from_text_and_desc_train(df):
+#     df["text_norm"] = [normalize_text(text) for text in df["text"]]
+#     df["description_norm"] = [normalize_text(text) for text in df["description"].fillna("")]
+#
+#     vectorizer = CountVectorizer()
+#     train_text = df["text_norm"]
+#     train_desc = df["description_norm"]
+#     vectorizer = vectorizer.fit(train_text.str.cat(train_desc, sep=' '))
+#
+#     X_train = compute_text_desc_feats_test(vectorizer, df)
+#
+#     return X_train
 
-    scaler = StandardScaler().fit(feats_test)
 
-    return (scaler.transform(feats_test))
+def extract_tweet_count_feats(df):
+    feats = df[["retweet_count", "tweet_count", "fav_number"]]
+
+    scaler = StandardScaler().fit(feats)
+
+    return scaler.transform(feats)
 
 
-def extract_tweet_count_feats_train(df):
-    feats_train = df[["retweet_count", "tweet_count", "fav_number"]]
-
-    scaler = StandardScaler().fit(feats_train)
-
-    return (scaler.transform(feats_train))
+# def extract_tweet_count_feats_train(df):
+#     feats_train = df[["retweet_count", "tweet_count", "fav_number"]]
+#
+#     scaler = StandardScaler().fit(feats_train)
+#
+#     return (scaler.transform(feats_train))
 
 def print_results(y_true, y, data_set_name, class_names):
     print(data_set_name)
