@@ -14,6 +14,8 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.metrics import classification_report
 from sklearn.metrics import accuracy_score
 from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import GridSearchCV
 
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -23,6 +25,7 @@ sns.set(style="white")
 sns.set(style="whitegrid", color_codes=True)
 
 PARAMS = [{'penalty': ["l1", "l2"], 'C': [4, 2, 1.5, 1, 0.5, 0.1, 0.05, 0.01, 0.001, 0.0001]}]
+JOBS = 4
 
 data = load_data()
 # print(list(data.columns))
@@ -39,6 +42,7 @@ x_train, x_test = split_data()
 y_train, class_names_train = encode_class_labels(x_train)
 y_test, class_names_test = encode_class_labels(x_test)
 
+
 # print(len(data1))
 # print(len(data2))
 
@@ -48,8 +52,14 @@ y_test, class_names_test = encode_class_labels(x_test)
 # print(y_test)
 # print(y_train)
 
-text_test = extract_feats_from_text(x_train)
-text_train = extract_feats_from_text(x_train)
+X_test = extract_feats_from_text(x_test)
+X_train = extract_feats_from_text(x_train)
+
+grid_search = GridSearchCV(LogisticRegression(), PARAMS, n_jobs=JOBS, verbose=5, cv=4, scoring="f1")
+
+grid_search.fit(X_train, y_train)
+
+report_results(grid_search, y_train, X_train, y_test, X_test, class_names_train)
 
 
 
