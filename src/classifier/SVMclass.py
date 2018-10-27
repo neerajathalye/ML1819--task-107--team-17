@@ -10,7 +10,8 @@ from sklearn.metrics import classification_report
 
 data=dp.load_data()
 JOBS=3
-PARAMS=[{'kernel': ["linear", "poly", "rbf", "sigmoid"],
+PARAMS=[{ 'C': [4, 2, 1.5, 1, 0.5, 0.1, 0.05, 0.01, 0.001, 0.0001],
+           'kernel': ["linear", "poly", "rbf", "sigmoid"],
            'cache_size': [1000]}]
            #'gamma': ['auto', 1.0, 1.0e-1, 1.0e-2, 1.0e-3, 1.0e-4, 1.0e-5, 1.0e-6]}]
 x_train, x_test = dp.split_data()
