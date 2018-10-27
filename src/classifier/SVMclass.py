@@ -10,7 +10,7 @@ from sklearn.metrics import classification_report
 
 data=dp.load_data()
 JOBS=4
-PARAMS=[{ 'kernel': ["linear"],
+PARAMS=[{ 'kernel': ["poly"],
            'cache_size': [100],'gamma': ['auto', 1.0, 1.0e-1, 1.0e-2, 1.0e-3, 1.0e-4, 1.0e-5, 1.0e-6]}]
 
 x_train, x_test,index_train, index_test = dp.split_data()
