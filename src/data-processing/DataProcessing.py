@@ -27,7 +27,7 @@ def split_data():
     data1 = data.loc[(data['gender:confidence'] == 1) & data['gender'].isin(array)]
     l = len(data1.index)
     indices = np.arange(1, l + 1)
-    x_train, x_test ,index_train, index_test = train_test_split(data1, indices, test_size=0.2)
+    x_train, x_test, index_train, index_test = train_test_split(data1, indices, test_size=0.2)
 
     x_train.to_csv(train_rows_path, index=None, header=True)
     x_test.to_csv(test_rows_path, index=None, header=True)
@@ -115,7 +115,36 @@ def extract_feats_from_text_and_desc():
 
     text = df.ix[index_train, :]["text_norm"]
     desc = df.ix[index_train, :]["description_norm"]
+
     vectorizer = vectorizer.fit(text.str.cat(desc, sep=' '))
+
+    x_tr = compute_text_desc_feats(vectorizer, index_train, df)
+    x_te = compute_text_desc_feats(vectorizer, index_test , df)
+
+    return x_tr, x_te
+
+def extract_feats_from_text_and_desc_and_name():
+
+    df = load_data()
+    x_train, x_test, index_train, index_test = split_data()
+
+    df["text_norm"] = [normalize_text(text) for text in df["text"]]
+    df["description_norm"] = [normalize_text(text) for text in df["description"].fillna("")]
+    df["name_norm"] = [normalize_text(text) for text in df["name"].fillna("")]
+    x_train["text_norm"] = [normalize_text(text) for text in x_train["text"]]
+    x_train["description_norm"] = [normalize_text(text) for text in x_train["description"].fillna("")]
+    x_train["name_norm"] = [normalize_text(text) for text in x_train["name"].fillna("")]
+    x_test["text_norm"] = [normalize_text(text) for text in x_test["text"]]
+    x_test["description_norm"] = [normalize_text(text) for text in x_test["description"].fillna("")]
+    x_test["name_norm"] = [normalize_text(text) for text in x_test["name"].fillna("")]
+
+    vectorizer = CountVectorizer()
+
+    text = df.ix[index_train, :]["text_norm"]
+    desc = df.ix[index_train, :]["description_norm"]
+    name = df.ix[index_train, :]["name"]
+
+    vectorizer = vectorizer.fit(name.str.cat(text.str.cat(desc, sep=' '), sep=' '))
 
     x_tr = compute_text_desc_feats(vectorizer, index_train, df)
     x_te = compute_text_desc_feats(vectorizer, index_test , df)
