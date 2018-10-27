@@ -6,6 +6,7 @@ from DataProcessing import report_results
 from DataProcessing import extract_feats_from_text
 from DataProcessing import extract_feats_from_name
 from DataProcessing import extract_feats_from_text_and_desc
+from DataProcessing import extract_feats_from_text_and_desc_and_name
 import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
@@ -30,7 +31,7 @@ JOBS = 4
 data = load_data()
 # print(list(data.columns))
 
-x_train, x_test = split_data()
+x_train, x_test , index_train1, index_test1 = split_data()
 
 # print(data.shape)
 # print(x_test.shape)
@@ -52,14 +53,17 @@ y_test, class_names_test = encode_class_labels(x_test)
 # print(y_test)
 # print(y_train)
 
-X_test = extract_feats_from_text(x_test)
-X_train = extract_feats_from_text(x_train)
+# X_train, X_test = extract_feats_from_text()
+X_train, X_test = extract_feats_from_text_and_desc()
+# X_train, X_test = extract_feats_from_text_and_desc_and_name()
 
 grid_search = GridSearchCV(LogisticRegression(), PARAMS, n_jobs=JOBS, verbose=5, cv=4, scoring="f1")
 
 grid_search.fit(X_train, y_train)
 
 report_results(grid_search, y_train, X_train, y_test, X_test, class_names_train)
+
+
 
 
 
