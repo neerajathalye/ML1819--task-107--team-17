@@ -10,24 +10,30 @@ from sklearn.metrics import classification_report
 
 data=dp.load_data()
 JOBS=4
-PARAMS=[{ 'C': [4, 2, 1.5, 1, 0.5, 0.1, 0.05, 0.01, 0.001, 0.0001],
-           'kernel': ["linear", "poly", "rbf", "sigmoid"],
-           'cache_size': [1000],'gamma': ['auto', 1.0, 1.0e-1, 1.0e-2, 1.0e-3, 1.0e-4, 1.0e-5, 1.0e-6]}]
-x_train, x_test = dp.split_data()
+PARAMS=[{ 'kernel': ["linear","sigmoid"],
+           'cache_size': [10],'gamma': ['auto', 1.0, 1.0e-1, 1.0e-2, 1.0e-3, 1.0e-4, 1.0e-5, 1.0e-6]}]
 
-X_train = dp.extract_feats_from_text(x_train)
-X_test=dp.extract_feats_from_text(x_test)
-feat_desc_train = dp.extract_feats_from_text_and_desc(x_train)
-feat_desc_test = dp.extract_feats_from_text_and_desc(x_test)
+x_train, x_test,index_train, index_test = dp.split_data()
 
 y_train,classname_train = dp.encode_class_labels(x_train)
 
 y_test,classname_test = dp.encode_class_labels(x_test)
 
+print ("features from text")
+X_train,X_test = dp.extract_feats_from_text()
+#X_test=dp.extract_feats_from_text()
+
 grid_search=GridSearchCV(SVC(),PARAMS,n_jobs=JOBS,verbose=5,cv=4,scoring="f1")
 
 grid_search.fit(X_train,y_train)
+dp.report_results(grid_search, y_train,X_train, y_test, X_test, classname_train)    #prints features wiht names
 
-dp.report_results(grid_search, y_train,feat_desc_train, y_test, feat_desc_test, classname_train)
+print("features from text and description")
+feat_desc_train,feat_desc_test = dp.extract_feats_from_text_and_desc()
 
 
+grid_search=GridSearchCV(SVC(),PARAMS,n_jobs=JOBS,verbose=5,cv=4,scoring="f1")
+
+grid_search.fit(feat_desc_train,y_train)
+
+dp.report_results(grid_search, y_train,feat_desc_train, y_test,feat_desc_test, classname_train)   #prints features with name and description
