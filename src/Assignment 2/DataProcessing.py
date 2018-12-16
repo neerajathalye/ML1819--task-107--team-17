@@ -31,13 +31,13 @@ data.drop (columns = ['_unit_id',
                       'profileimage',
                       'created'], inplace = True)
 
-data.info()
+# data.info()
 
-print(data.head(3))
+# print(data.head(3))
 
 #Cleaning Dataset
 #Analysing the Gender column
-print(data['gender'].value_counts())
+# print(data['gender'].value_counts())
 
 #Removing the unknown parameters in the Gender
 drop_items_idx1 = data[data['gender'] == 'unknown'].index
@@ -46,39 +46,37 @@ drop_items_idx2 = data[data['gender'] == 'brand'].index
 data.drop (index = drop_items_idx1, inplace = True)
 data.drop (index = drop_items_idx2, inplace = True)
 
-print(data['gender'].value_counts())
+# print(data['gender'].value_counts())
 
-#Handling the missing dataset values by deleting the NaN values
+#Handling the missing dataset values by deleting the NaN values(all rows having profile_yn = 'no'
 
-print ('profile_yn information:\n',data['profile_yn'].value_counts())
+# print ('profile_yn information:\n',data['profile_yn'].value_counts())
 
-print(data[data['profile_yn'] == 'no']['gender'])
-print(data[data['profile_yn'] == 'yes']['gender'])
+# print(data[data['profile_yn'] == 'no']['gender'])
+
 
 drop_items_idx3 = data[data['profile_yn'] == 'no'].index
-drop_items_idx4 = data[data['profile_yn'] == 'yes'].index
 
 data.drop (index = drop_items_idx3, inplace = True)
-data.drop (index = drop_items_idx4, inplace = True)
 
-data['profile_yn'].value_counts()
+print ('profile_yn information:\n',data['profile_yn'].value_counts())
 data.drop (columns = ['profile_yn','profile_yn:confidence','profile_yn_gold'], inplace = True)
 
 #Checking the data again after some modifications(cleaning/handling missing values)
 
-print (data['gender'].value_counts())
+# print (data['gender'].value_counts())
 
-print ('++++++++++++++++++++++++++++')
-data.info()
+# print ('++++++++++++++++++++++++++++')
+# data.info()
 
 #Checking the Gender Confidence column, selecting only the values with gender confidence = 1 and dropping others
 
-print ('Total data: ', data.shape)
-print ('Data with gender confidence < 1: ', data[data['gender:confidence'] < 1].shape)
+# print ('Total data: ', data.shape)
+# print ('Data with gender confidence < 1: ', data[data['gender:confidence'] < 1].shape)
 
-drop_items_idx5 = data[data['gender:confidence'] < 1].index
-data.drop (index = drop_items_idx5, inplace = True)
-print (data['gender:confidence'].value_counts())
+drop_items_idx4 = data[data['gender:confidence'] < 1].index
+data.drop (index = drop_items_idx4, inplace = True)
+# print (data['gender:confidence'].value_counts())
 data.drop (columns = ['gender:confidence'], inplace = True)
 
 #Again deleting some less useful features as a part of feature selection
@@ -86,7 +84,11 @@ data.drop (columns = ['gender:confidence'], inplace = True)
 data.drop (columns = ['_golden','_unit_state','_trusted_judgments','gender_gold'], inplace = True)
 
 # Checking the data
-print (data['gender'].value_counts())
+# print (data['gender'].value_counts())
 
-print ('++++++++++++++++++++++++++')
-data.info()
+# print ('++++++++++++++++++++++++++')
+# data.info()
+
+#Now we will normalize our data, since our most significant data is in the form of tweets, description (text) ,
+# we will use stop words
+
