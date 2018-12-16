@@ -33,4 +33,17 @@ data.drop (columns = ['_unit_id',
 
 data.info()
 
-data.head(3)
+print(data.head(3))
+
+#Cleaning Dataset
+#Analysing the Gender column
+print(data['gender'].value_counts())
+
+#Removing the unknown parameters in the Gender
+drop_items_idx1 = data[data['gender'] == 'unknown'].index
+drop_items_idx2 = data[data['gender'] == 'brand'].index
+
+data.drop (index = drop_items_idx1, inplace = True)
+data.drop (index = drop_items_idx2, inplace = True)
+
+print(data['gender'].value_counts())
