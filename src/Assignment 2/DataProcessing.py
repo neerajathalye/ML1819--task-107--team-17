@@ -1,8 +1,14 @@
 # Import libraries
 
 import pandas as pd
+import nltk
+from nltk.corpus import stopwords
+from nltk.stem import PorterStemmer
 import re
 import os.path
+from collections import Counter
+from sklearn.preprocessing import LabelEncoder
+from sklearn.linear_model import LogisticRegression
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -135,6 +141,8 @@ data.drop (columns = ['_golden','_unit_state','_trusted_judgments','gender_gold'
 # sns.barplot (x = female_top_sidebar_color, y = female_top_color, palette=list(map(l, female_top_color)))
 # plt.show()
 
+data.drop (columns = ['sidebar_color'], inplace = True)
+
 #Visualizing colour attributes - link colour (male)
 
 # male_top_link_color = data[data['gender'] == 'male']['link_color'].value_counts().head(6)
@@ -162,10 +170,88 @@ data.drop (columns = ['_golden','_unit_state','_trusted_judgments','gender_gold'
 # sns.barplot (x = female_top_link_color, y = female_top_link_color_idx, palette=list(map(l, female_top_color)))
 # plt.show()
 
-
-
-
-
 #Now we will normalize our data, since our most significant data is in the form of tweets, description (text) ,
 # we will use stop words
+
+tweet_vocab = Counter()
+for tweet in data['text']:
+    for word in tweet.split(' '):
+        tweet_vocab[word] += 1
+
+#Printing the most common 30 words
+print(tweet_vocab.most_common(30))
+
+nltk.download('stopwords')
+
+stop = stopwords.words('english')
+
+tweet_vocab_reduced = Counter()
+for i, j in tweet_vocab.items():
+    if not i in stop:
+        tweet_vocab_reduced[i]=j
+
+#Printing reduced vocabulory
+print(tweet_vocab_reduced.most_common(30))
+
+#Text Clean Function
+
+def TextClean(text):
+    """ Return a cleaned version of text
+    """
+    # Remove HTML markup
+    text = re.sub('<[^>]*>', '', text)
+    # Save emoticons for later appending
+    emojis = re.findall('(?::|;|=)(?:-)?(?:\)|\(|D|P)', text)
+    # Remove any non-word character and append the emoticons,
+    # removing the nose character for standarization. Convert to lower case
+    text = (re.sub('[\W]+', ' ', text.lower()) + ' ' + ' '.join(emojis).replace('-', ''))
+
+    return text
+
+
+#print(TextClean('This!!@ twit :) is <b>nice</b>'))
+
+#Further normalization using Porter Stemming
+
+porter = PorterStemmer()
+
+def tokenizer(text):
+    return text.split()
+
+def porter_tokenizer(text):
+    return [porter.stem(word) for word in text.split()]
+
+#print(tokenizer('Hi there, I am loving this, like with a lot of love running bunning shunning cunning fucking harder runs funs guns ponies'))
+#print(porter_tokenizer('Hi there, I am loving this, like with a lot of love running bunning shunning cunning fucking harder runs funs guns ponies'))
+
+#Encoding and Splitting the data set into test and train
+
+
+encoder = LabelEncoder()
+y = encoder.fit_transform(data['gender'])
+
+
+# split the dataset in train and test
+X = data['text']
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=0, stratify=y)
+#In the code line above, stratify will create a train set with the same class balance than the original set
+print(X_train.head())
+
+
+#Starting the Algorithms
+
+#Logistic Regression (for only text)
+
+tfidf = TfidfVectorizer(lowercase=False,
+                        tokenizer=porter_tokenizer,
+                        preprocessor=TextClean)
+clf = Pipeline([('vect', tfidf),
+                ('clf', LogisticRegression(multi_class='ovr', random_state=0))])
+
+clf.fit(X_train, y_train)
+
+predictions = clf.predict(X_test)
+print('Accuracy:',accuracy_score(y_test,predictions))
+print('Confusion matrix:\n',confusion_matrix(y_test,predictions))
+print('Classification report:\n',classification_report(y_test,predictions))
 
