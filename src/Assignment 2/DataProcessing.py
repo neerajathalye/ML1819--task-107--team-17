@@ -231,71 +231,99 @@ def porter_tokenizer(text):
 
 
 encoder = LabelEncoder()
-y = encoder.fit_transform(data['gender']) # male = 1, female = 0
+y = encoder.fit_transform(data['gender']) # encode male = 1, female = 0
 # print(data['gender'])
 # print(y)
 
 
-# split the dataset in train and test
+def MLAlgorithms():
+
+    tfidf = TfidfVectorizer(lowercase=False,
+                            tokenizer=porter_tokenizer,
+                            preprocessor=TextClean)
+
+    JOBS = 4
+
+    # Logistic Regression
+
+    PARAMS = [{'penalty': ["l1", "l2"], 'C': [10, 5, 1, 0.5, 0.1, 0.05, 0.01, 0.005, 0.001, 0.0005, 0.0001]}]
+
+    clf = Pipeline([('vect', tfidf),
+                    ('clf', GridSearchCV(LogisticRegression(), PARAMS, n_jobs=JOBS, verbose=5, cv=4, scoring="f1"))])
+
+    clf.fit(X_train, y_train)
+
+    print("----------------------------------------------------------------")
+    print("LOGISTIC REGRESSION")
+    predictions = clf.predict(X_test)
+    print('Accuracy:', accuracy_score(y_test, predictions))
+    print('Confusion matrix:\n', confusion_matrix(y_test, predictions))
+    print('Classification report:\n', classification_report(y_test, predictions))
+
+    # Naive Bayes
+
+    PARAMS = [{'alpha': [10, 5, 1, 0.5, 0.1, 0.05, 0.01, 0.005, 0.001, 0.0005, 0.0001]}]
+
+    clf = Pipeline([('vect', tfidf),
+                    ('clf', GridSearchCV(MultinomialNB(), PARAMS, n_jobs=JOBS, verbose=5, cv=4,
+                                         scoring="f1"))])
+
+    clf.fit(X_train, y_train)
+
+    print("----------------------------------------------------------------")
+    print("NAIVE BAYES")
+
+    predictions = clf.predict(X_test)
+    print('Accuracy:', accuracy_score(y_test, predictions))
+    print('Confusion matrix:\n', confusion_matrix(y_test, predictions))
+    print('Classification report:\n', classification_report(y_test, predictions))
+
+    # SVM
+
+    PARAMS = [{'kernel': ['rbf'], 'gamma': [1e-3, 1e-4],'C': [1, 10, 100, 1000]}, {'kernel': ['linear'], 'C': [1, 10, 100, 1000]}]
+
+    clf = Pipeline([('vect', tfidf),
+                    ('clf', GridSearchCV(SVC(), PARAMS, n_jobs=JOBS, verbose=5, cv=4, scoring="f1"))])
+    clf.fit(X_train, y_train)
+    print("----------------------------------------------------------------")
+    print("SUPPORT VECTOR MACHINE")
+    predictions = clf.predict(X_test)
+    print('Accuracy:', accuracy_score(y_test, predictions))
+    print('Confusion matrix:\n', confusion_matrix(y_test, predictions))
+    print('Classification report:\n', classification_report(y_test, predictions))
+
+
+
+# split the dataset in train and test(FOR text)
 X = data['text']
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=0, stratify=y)
 #In the code line above, stratify will create a train set with the same class balance than the original set
 # print(X_train.head())
 
-
-#Starting the Algorithms
-
-tfidf = TfidfVectorizer(lowercase=False,
-                        tokenizer=porter_tokenizer,
-                        preprocessor=TextClean)
-
-JOBS = 4
-
-#Logistic Regression (for only text)
-
-PARAMS = [{'penalty': ["l1", "l2"], 'C': [10, 5, 1, 0.5, 0.1, 0.05, 0.01, 0.005, 0.001, 0.0005, 0.0001]}]
-
-clf = Pipeline([('vect', tfidf),
-                ('clf', GridSearchCV(LogisticRegression(), PARAMS, n_jobs=JOBS, verbose=5, cv=4, scoring="f1"))])
-
-clf.fit(X_train, y_train)
-
-print("----------------------------------------------------------------")
-print("LOGISTIC REGRESSION")
-predictions = clf.predict(X_test)
-print('Accuracy:',accuracy_score(y_test,predictions))
-print('Confusion matrix:\n',confusion_matrix(y_test,predictions))
-print('Classification report:\n',classification_report(y_test,predictions))
-
-#Naive Bayes (for only text)
-
-PARAMS = [{'alpha': [10, 5, 1, 0.5, 0.1, 0.05, 0.01, 0.005, 0.001, 0.0005, 0.0001]}]
+print("USING TEXT")
+MLAlgorithms()
 
 
-clf = Pipeline([('vect', tfidf),
-                ('clf', GridSearchCV(MultinomialNB(), PARAMS, n_jobs=JOBS, verbose=5, cv=4,
-                           scoring="f1"))])
+#Using Text+Description
 
-clf.fit(X_train, y_train)
+data.fillna("", inplace = True) # Replacing all NaN with empty strings
+data['text_description'] = data['text'].str.cat(data['description'], sep=' ') #Concatenate the text and descriptions into a new column text_description
+
+# print(data['text_description'].isnull().value_counts()) #Check if there are any null values in this column
+
+X = data['text_description']
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=0, stratify=y)
+#In the code line above, stratify will create a train set with the same class balance than the original set
+# X_train.head()
+# print(X_train.isnull().values.any()) # Check if any null values, True if there is at least one.
+print("USING TEXT AND DESCRIPTION")
+MLAlgorithms()
 
 
-print("----------------------------------------------------------------")
-print("NAIVE BAYES")
 
-predictions = clf.predict(X_test)
-print('Accuracy:',accuracy_score(y_test,predictions))
-print('Confusion matrix:\n',confusion_matrix(y_test,predictions))
-print('Classification report:\n',classification_report(y_test,predictions))
 
-#SVM(for only text)
 
-clf = Pipeline([('vect', tfidf),
-                ('clf', SVC(kernel = 'linear'))])
-clf.fit(X_train, y_train)
-print("----------------------------------------------------------------")
-print("SUPPORT VECTOR MACHINE")
-predictions = clf.predict(X_test)
-print('Accuracy:',accuracy_score(y_test,predictions))
-print('Confusion matrix:\n',confusion_matrix(y_test,predictions))
-print('Classification report:\n',classification_report(y_test,predictions))
+
+
+
 
