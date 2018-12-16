@@ -59,7 +59,7 @@ drop_items_idx3 = data[data['profile_yn'] == 'no'].index
 
 data.drop (index = drop_items_idx3, inplace = True)
 
-print ('profile_yn information:\n',data['profile_yn'].value_counts())
+# print ('profile_yn information:\n',data['profile_yn'].value_counts())
 data.drop (columns = ['profile_yn','profile_yn:confidence','profile_yn_gold'], inplace = True)
 
 #Checking the data again after some modifications(cleaning/handling missing values)
@@ -88,6 +88,41 @@ data.drop (columns = ['_golden','_unit_state','_trusted_judgments','gender_gold'
 
 # print ('++++++++++++++++++++++++++')
 # data.info()
+
+#Now, for differenciate among features, visualizing the columns
+
+#Visualizing gender using countplot
+sns.countplot(data['gender'],label="Gender")
+# plt.show()
+
+
+# #Visualizing the amount of tweet favourites and retweets
+sns.barplot (x = 'gender', y = 'fav_number',data = data)
+# plt.show()
+sns.barplot (x = 'gender', y = 'retweet_count',data = data)
+# plt.show()
+#
+# #Visualizing colour attributes - sidebar colour
+#
+# male_top_sidebar_color = data[data['gender'] == 'male']['sidebar_color'].value_counts()
+# print(male_top_sidebar_color)
+male_top_sidebar_color = data[data['gender'] == 'male']['sidebar_color'].value_counts().head(6)
+print(male_top_sidebar_color)
+male_top_sidebar_color_idx = male_top_sidebar_color.index
+male_top_color = male_top_sidebar_color_idx.values
+
+male_top_color[2] = '000000'
+print(male_top_color)
+l = lambda x: '#'+x
+
+sns.set_style("darkgrid", {"axes.facecolor": "#F5ABB5"})
+sns.set(rc = {'axes.facecolor':'cornflowerblue'})
+sns.barplot (x = male_top_sidebar_color, y = male_top_color, palette=list(map(l, male_top_color)))
+fig, ax= plt.subplots()
+plt.show()
+
+
+
 
 #Now we will normalize our data, since our most significant data is in the form of tweets, description (text) ,
 # we will use stop words
