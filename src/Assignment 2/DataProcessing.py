@@ -9,6 +9,7 @@ import os.path
 from collections import Counter
 from sklearn.preprocessing import LabelEncoder
 from sklearn.linear_model import LogisticRegression
+from sklearn.svm import SVC
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -272,6 +273,18 @@ clf.fit(X_train, y_train)
 print("----------------------------------------------------------------")
 print("NAIVE BAYES")
 
+predictions = clf.predict(X_test)
+print('Accuracy:',accuracy_score(y_test,predictions))
+print('Confusion matrix:\n',confusion_matrix(y_test,predictions))
+print('Classification report:\n',classification_report(y_test,predictions))
+
+#SVM(for only text)
+
+clf = Pipeline([('vect', tfidf),
+                ('clf', SVC(kernel = 'linear'))])
+clf.fit(X_train, y_train)
+print("----------------------------------------------------------------")
+print("SUPPORT VECTOR MACHINE")
 predictions = clf.predict(X_test)
 print('Accuracy:',accuracy_score(y_test,predictions))
 print('Confusion matrix:\n',confusion_matrix(y_test,predictions))
