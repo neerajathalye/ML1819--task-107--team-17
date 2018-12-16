@@ -182,7 +182,7 @@ for tweet in data['text']:
         tweet_vocab[word] += 1
 
 #Printing the most common 30 words
-print(tweet_vocab.most_common(30))
+# print(tweet_vocab.most_common(30))
 
 nltk.download('stopwords')
 
@@ -194,7 +194,7 @@ for i, j in tweet_vocab.items():
         tweet_vocab_reduced[i]=j
 
 #Printing reduced vocabulory
-print(tweet_vocab_reduced.most_common(30))
+# print(tweet_vocab_reduced.most_common(30))
 
 #Text Clean Function
 
@@ -231,7 +231,9 @@ def porter_tokenizer(text):
 
 
 encoder = LabelEncoder()
-y = encoder.fit_transform(data['gender'])
+y = encoder.fit_transform(data['gender']) # male = 1, female = 0
+# print(data['gender'])
+# print(y)
 
 
 # split the dataset in train and test
@@ -247,11 +249,14 @@ tfidf = TfidfVectorizer(lowercase=False,
                         tokenizer=porter_tokenizer,
                         preprocessor=TextClean)
 
+JOBS = 4
 
 #Logistic Regression (for only text)
 
+PARAMS = [{'penalty': ["l1", "l2"], 'C': [10, 5, 1, 0.5, 0.1, 0.05, 0.01, 0.005, 0.001, 0.0005, 0.0001]}]
+
 clf = Pipeline([('vect', tfidf),
-                ('clf', LogisticRegression(multi_class='ovr', random_state=0))])
+                ('clf', GridSearchCV(LogisticRegression(), PARAMS, n_jobs=JOBS, verbose=5, cv=4, scoring="f1"))])
 
 clf.fit(X_train, y_train)
 
@@ -264,8 +269,12 @@ print('Classification report:\n',classification_report(y_test,predictions))
 
 #Naive Bayes (for only text)
 
+PARAMS = [{'alpha': [10, 5, 1, 0.5, 0.1, 0.05, 0.01, 0.005, 0.001, 0.0005, 0.0001]}]
+
+
 clf = Pipeline([('vect', tfidf),
-                ('clf', MultinomialNB(alpha=1.0, class_prior=None, fit_prior=True))])
+                ('clf', GridSearchCV(MultinomialNB(), PARAMS, n_jobs=JOBS, verbose=5, cv=4,
+                           scoring="f1"))])
 
 clf.fit(X_train, y_train)
 
