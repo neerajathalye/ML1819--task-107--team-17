@@ -16,6 +16,8 @@ from sklearn.model_selection import train_test_split
 from sklearn.pipeline import Pipeline
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
+from sklearn.model_selection import GridSearchCV
+from sklearn.naive_bayes import MultinomialNB
 
 #from sklearn_pandas import DataFrameMapper # Notice that this is actually Sklearn-Pandas library
 #%matplotlib inline
@@ -235,20 +237,40 @@ y = encoder.fit_transform(data['gender'])
 X = data['text']
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=0, stratify=y)
 #In the code line above, stratify will create a train set with the same class balance than the original set
-print(X_train.head())
+# print(X_train.head())
 
 
 #Starting the Algorithms
 
-#Logistic Regression (for only text)
-
 tfidf = TfidfVectorizer(lowercase=False,
                         tokenizer=porter_tokenizer,
                         preprocessor=TextClean)
+
+
+#Logistic Regression (for only text)
+
 clf = Pipeline([('vect', tfidf),
                 ('clf', LogisticRegression(multi_class='ovr', random_state=0))])
 
 clf.fit(X_train, y_train)
+
+print("----------------------------------------------------------------")
+print("LOGISTIC REGRESSION")
+predictions = clf.predict(X_test)
+print('Accuracy:',accuracy_score(y_test,predictions))
+print('Confusion matrix:\n',confusion_matrix(y_test,predictions))
+print('Classification report:\n',classification_report(y_test,predictions))
+
+#Naive Bayes (for only text)
+
+clf = Pipeline([('vect', tfidf),
+                ('clf', MultinomialNB(alpha=1.0, class_prior=None, fit_prior=True))])
+
+clf.fit(X_train, y_train)
+
+
+print("----------------------------------------------------------------")
+print("NAIVE BAYES")
 
 predictions = clf.predict(X_test)
 print('Accuracy:',accuracy_score(y_test,predictions))
