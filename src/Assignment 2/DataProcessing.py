@@ -71,4 +71,22 @@ print (data['gender'].value_counts())
 print ('++++++++++++++++++++++++++++')
 data.info()
 
+#Checking the Gender Confidence column, selecting only the values with gender confidence = 1 and dropping others
 
+print ('Total data: ', data.shape)
+print ('Data with gender confidence < 1: ', data[data['gender:confidence'] < 1].shape)
+
+drop_items_idx5 = data[data['gender:confidence'] < 1].index
+data.drop (index = drop_items_idx5, inplace = True)
+print (data['gender:confidence'].value_counts())
+data.drop (columns = ['gender:confidence'], inplace = True)
+
+#Again deleting some less useful features as a part of feature selection
+
+data.drop (columns = ['_golden','_unit_state','_trusted_judgments','gender_gold'], inplace = True)
+
+# Checking the data
+print (data['gender'].value_counts())
+
+print ('++++++++++++++++++++++++++')
+data.info()
