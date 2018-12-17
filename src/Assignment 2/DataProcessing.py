@@ -36,13 +36,13 @@ data.drop (columns = ['_unit_id',
                       'profileimage',
                       'created'], inplace = True)
 
-# data.info()
+data.info()
 
 # print(data.head(3))
 
 #Cleaning Dataset
 #Analysing the Gender column
-# print(data['gender'].value_counts())
+print(data['gender'].value_counts())
 
 #Removing the unknown parameters in the Gender
 drop_items_idx1 = data[data['gender'] == 'unknown'].index
@@ -94,7 +94,7 @@ data.drop (columns = ['_golden','_unit_state','_trusted_judgments','gender_gold'
 # print ('++++++++++++++++++++++++++')
 # data.info()
 
-#Now, for differenciate among features, visualizing the columns
+#Now, to differenciate among features, visualize the columns
 
 #Visualizing gender using countplot
 sns.countplot(data['gender'],label="Gender")
@@ -235,6 +235,7 @@ y = encoder.fit_transform(data['gender']) # encode male = 1, female = 0
 # print(data['gender'])
 # print(y)
 
+data.info()
 
 def MLAlgorithms():
 
@@ -245,14 +246,12 @@ def MLAlgorithms():
     JOBS = 4
 
     # Logistic Regression
-
     PARAMS = [{'penalty': ["l1", "l2"], 'C': [10, 5, 1, 0.5, 0.1, 0.05, 0.01, 0.005, 0.001, 0.0005, 0.0001]}]
 
     clf = Pipeline([('vect', tfidf),
                     ('clf', GridSearchCV(LogisticRegression(), PARAMS, n_jobs=JOBS, verbose=5, cv=4, scoring="f1"))])
 
     clf.fit(X_train, y_train)
-
 
     print("----------------------------------------------------------------")
     print("LOGISTIC REGRESSION")
@@ -270,7 +269,6 @@ def MLAlgorithms():
     clf = Pipeline([('vect', tfidf),
                     ('clf', GridSearchCV(MultinomialNB(), PARAMS, n_jobs=JOBS, verbose=5, cv=4,
                                          scoring="f1"))])
-
     clf.fit(X_train, y_train)
 
     print("----------------------------------------------------------------")
@@ -302,10 +300,6 @@ def MLAlgorithms():
 
     return barY
 
-
-
-
-
 # split the dataset in train and test(FOR text)
 X = data['text']
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=0, stratify=y)
@@ -320,18 +314,18 @@ TextAccuracy = MLAlgorithms()
 
 data.fillna("", inplace = True) # Replacing all NaN with empty strings
 data['text_description'] = data['text'].str.cat(data['description'], sep=' ') #Concatenate the text and descriptions into a new column text_description
-
 # print(data['text_description'].isnull().value_counts()) #Check if there are any null values in this column
-
 X = data['text_description']
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=0, stratify=y)
 #In the code line above, stratify will create a train set with the same class balance than the original set
 # X_train.head()
 # print(X_train.isnull().values.any()) # Check if any null values, True if there is at least one.
 print("USING TEXT AND DESCRIPTION")
-
 TextDescAccuracy = MLAlgorithms()
 
+
+
+#Accuracy Visualization
 data = [
     ["Text", "Logistic Regression", TextAccuracy[0]],
     ["Text", "Naive Bayes", TextAccuracy[1]],
