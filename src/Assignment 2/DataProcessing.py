@@ -10,6 +10,8 @@ from collections import Counter
 from sklearn.preprocessing import LabelEncoder
 from sklearn.linear_model import LogisticRegression
 from sklearn.svm import SVC
+import seaborn as sns
+import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 from sklearn.pipeline import Pipeline
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -95,77 +97,81 @@ data.drop (columns = ['_golden','_unit_state','_trusted_judgments','gender_gold'
 #Now, for differenciate among features, visualizing the columns
 
 #Visualizing gender using countplot
-# sns.countplot(data['gender'],label="Gender")
-# plt.show()
-#
-#
-# # #Visualizing the amount of tweet favourites and retweets
-# sns.barplot (x = 'gender', y = 'fav_number',data = data)
-# plt.show()
-# sns.barplot (x = 'gender', y = 'retweet_count',data = data)
-# plt.show()
-#
-#Visualizing colour attributes - sidebar colour (Male)
-#
-# male_top_sidebar_color = data[data['gender'] == 'male']['sidebar_color'].value_counts()
-# print(male_top_sidebar_color)
-# male_top_sidebar_color = data[data['gender'] == 'male']['sidebar_color'].value_counts().head(6)
-# print(male_top_sidebar_color)
-# male_top_sidebar_color_idx = male_top_sidebar_color.index
-# male_top_color = male_top_sidebar_color_idx.values
-#
-# male_top_color[2] = '000000'
-# print(male_top_color)
-# l = lambda x: '#'+x
-#
-# sns.set_style("darkgrid", {"axes.facecolor": "#7C8BA5"})
-#
-# sns.barplot (x = male_top_sidebar_color, y = male_top_color, palette=list(map(l, male_top_color)))
-# plt.show()
+sns.countplot(data['gender'],label="Gender")
+plt.show()
 
-#Visualizing colour attributes - sidebar colour (Female)
 
-# female_top_sidebar_color = data[data['gender'] == 'female']['sidebar_color'].value_counts().head(6)
-# female_top_sidebar_color_idx = female_top_sidebar_color.index
-# female_top_color = female_top_sidebar_color_idx.values
-#
-# female_top_color[2] = '000000'
-# print (female_top_color)
-#
-# l = lambda x: '#'+x
-#
-# sns.set_style("darkgrid", {"axes.facecolor": "#7C8BA5"})
-# sns.barplot (x = female_top_sidebar_color, y = female_top_color, palette=list(map(l, female_top_color)))
-# plt.show()
+# #Visualizing the amount of tweet favourites and retweets
+sns.barplot (x = 'gender', y = 'fav_number',data = data)
+plt.show()
+sns.barplot (x = 'gender', y = 'retweet_count',data = data)
+plt.show()
+
+# Visualizing colour attributes - sidebar colour (Male)
+
+male_top_sidebar_color = data[data['gender'] == 'male']['sidebar_color'].value_counts()
+print(male_top_sidebar_color)
+male_top_sidebar_color = data[data['gender'] == 'male']['sidebar_color'].value_counts().head(6)
+print(male_top_sidebar_color)
+male_top_sidebar_color_idx = male_top_sidebar_color.index
+male_top_color = male_top_sidebar_color_idx.values
+
+male_top_color[2] = '000000'
+print(male_top_color)
+l = lambda x: '#'+x
+
+sns.set_style("darkgrid", {"axes.facecolor": "#7C8BA5"})
+
+sns.barplot (x = male_top_sidebar_color, y = male_top_color, palette=list(map(l, male_top_color)))
+plt.title("Sidebar Color Male")
+plt.show()
+
+# Visualizing colour attributes - sidebar colour (Female)
+
+female_top_sidebar_color = data[data['gender'] == 'female']['sidebar_color'].value_counts().head(6)
+female_top_sidebar_color_idx = female_top_sidebar_color.index
+female_top_color = female_top_sidebar_color_idx.values
+
+female_top_color[2] = '000000'
+print (female_top_color)
+
+l = lambda x: '#'+x
+
+sns.set_style("darkgrid", {"axes.facecolor": "#7C8BA5"})
+sns.barplot (x = female_top_sidebar_color, y = female_top_color, palette=list(map(l, female_top_color)))
+plt.title("Sidebar Color Female")
+plt.show()
 
 data.drop (columns = ['sidebar_color'], inplace = True)
 
 #Visualizing colour attributes - link colour (male)
 
-# male_top_link_color = data[data['gender'] == 'male']['link_color'].value_counts().head(6)
-# male_top_link_color_idx = male_top_link_color.index
-# male_top_color = male_top_link_color_idx.values
-# male_top_color[1] = '009999'
-# male_top_color[5] = '000000'
-# print(male_top_color)
-#
-# l = lambda x: '#'+x
-#
-# sns.set_style("whitegrid", {"axes.facecolor": "white"})
-# sns.barplot (x = male_top_link_color, y = male_top_link_color_idx, palette=list(map(l, male_top_color)))
-# plt.show()
+male_top_link_color = data[data['gender'] == 'male']['link_color'].value_counts().head(6)
+male_top_link_color_idx = male_top_link_color.index
+male_top_color = male_top_link_color_idx.values
+male_top_color[1] = '009999'
+male_top_color[5] = '000000'
+print(male_top_color)
+
+l = lambda x: '#'+x
+
+sns.set_style("whitegrid", {"axes.facecolor": "white"})
+sns.barplot (x = male_top_link_color, y = male_top_link_color_idx, palette=list(map(l, male_top_color)))
+plt.title("Link Color Male")
+plt.show()
 
 #Visualizing colour attributes - link colour (female)
 
-# female_top_link_color = data[data['gender'] == 'female']['link_color'].value_counts().head(7)
-# female_top_link_color_idx = female_top_link_color.index
-# female_top_color = female_top_link_color_idx.values
-#
-# l = lambda x: '#'+x
-#
-# sns.set_style("whitegrid", {"axes.facecolor": "white"})
-# sns.barplot (x = female_top_link_color, y = female_top_link_color_idx, palette=list(map(l, female_top_color)))
-# plt.show()
+female_top_link_color = data[data['gender'] == 'female']['link_color'].value_counts().head(7)
+female_top_link_color_idx = female_top_link_color.index
+female_top_color = female_top_link_color_idx.values
+
+l = lambda x: '#'+x
+
+sns.set_style("whitegrid", {"axes.facecolor": "white"})
+sns.barplot (x = female_top_link_color, y = female_top_link_color_idx, palette=list(map(l, female_top_color)))
+plt.title("Link Color Female")
+plt.show()
 
 #Now we will normalize our data, since our most significant data is in the form of tweets, description (text) ,
 # we will use stop words
@@ -247,10 +253,13 @@ def MLAlgorithms():
 
     clf.fit(X_train, y_train)
 
+
     print("----------------------------------------------------------------")
     print("LOGISTIC REGRESSION")
     predictions = clf.predict(X_test)
-    print('Accuracy:', accuracy_score(y_test, predictions))
+    LRAccuracy = accuracy_score(y_test, predictions)
+
+    print('Accuracy:', LRAccuracy)
     print('Confusion matrix:\n', confusion_matrix(y_test, predictions))
     print('Classification report:\n', classification_report(y_test, predictions))
 
@@ -268,7 +277,9 @@ def MLAlgorithms():
     print("NAIVE BAYES")
 
     predictions = clf.predict(X_test)
-    print('Accuracy:', accuracy_score(y_test, predictions))
+    NBAccuracy = accuracy_score(y_test, predictions)
+
+    print('Accuracy:', NBAccuracy)
     print('Confusion matrix:\n', confusion_matrix(y_test, predictions))
     print('Classification report:\n', classification_report(y_test, predictions))
 
@@ -282,9 +293,16 @@ def MLAlgorithms():
     print("----------------------------------------------------------------")
     print("SUPPORT VECTOR MACHINE")
     predictions = clf.predict(X_test)
-    print('Accuracy:', accuracy_score(y_test, predictions))
+    SVMAccuracy = accuracy_score(y_test, predictions)
+    print('Accuracy:', SVMAccuracy)
     print('Confusion matrix:\n', confusion_matrix(y_test, predictions))
     print('Classification report:\n', classification_report(y_test, predictions))
+
+    barY = [LRAccuracy, NBAccuracy, SVMAccuracy]
+
+    return barY
+
+
 
 
 
@@ -295,7 +313,7 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_
 # print(X_train.head())
 
 print("USING TEXT")
-MLAlgorithms()
+TextAccuracy = MLAlgorithms()
 
 
 #Using Text+Description
@@ -311,7 +329,52 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_
 # X_train.head()
 # print(X_train.isnull().values.any()) # Check if any null values, True if there is at least one.
 print("USING TEXT AND DESCRIPTION")
-MLAlgorithms()
+
+TextDescAccuracy = MLAlgorithms()
+
+data = [
+    ["Text", "Logistic Regression", TextAccuracy[0]],
+    ["Text", "Naive Bayes", TextAccuracy[1]],
+    ["Text", "SVM", TextAccuracy[2]],
+    ["Text and Description", "Logistic Regression", TextDescAccuracy[0]],
+    ["Text and Description", "Naive Bayes", TextDescAccuracy[1]],
+    ["Text and Description", "SVM", TextDescAccuracy[2]]
+]
+
+df = pd.DataFrame(data, columns=["Feature", "Algorithm", "Accuracy"])
+
+ax = sns.barplot(x="Algorithm", y="Accuracy", data=df, hue="Feature")
+
+sns.despine(left=True)
+
+rects = ax.patches
+
+# Make some labels.
+labels = [TextAccuracy[0], TextDescAccuracy[0], TextAccuracy[1], TextDescAccuracy[1], TextAccuracy[2], TextDescAccuracy[2]]
+print(labels)
+
+for rect in rects:
+    # Get X and Y placement of label from rect.
+    y_value = rect.get_height()
+    x_value = rect.get_x() + rect.get_width() / 2
+    # Number of points between bar and label. Change to your liking.
+    space = 5
+    # Vertical alignment for positive values
+    va = 'bottom'
+    # Use Y value as label and format number with 3 decimal places
+    label = "{:.3f}".format(y_value)
+
+    # Create annotation
+    plt.annotate(
+        label,  # Use `label` as label
+        (x_value, y_value),  # Place label at end of the bar
+        xytext=(0, space),  # Vertically shift label by `space`
+        textcoords="offset points",  # Interpret `xytext` as offset in points
+        ha='center',  # Horizontally center label
+        va=va)  # Vertically align label differently for
+
+plt.show()
+
 
 
 
