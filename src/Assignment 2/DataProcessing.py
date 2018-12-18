@@ -1,5 +1,4 @@
 # Import libraries
-
 import pandas as pd
 import nltk
 from nltk.corpus import stopwords
@@ -22,7 +21,6 @@ from sklearn.naive_bayes import MultinomialNB
 # Load dataset
 dataset_path = os.path.join(os.path.dirname(os.path.dirname(os.getcwd())), 'dataset\\gender-classifier-DFE-791531.csv')
 data = pd.read_csv(dataset_path, encoding='latin1')
-#data = pd.read_csv('../input/gender-classifier-DFE-791531.csv', encoding='latin-1')
 
 # Drop unnecessary columns/features
 data.drop (columns = ['_unit_id',
@@ -38,7 +36,7 @@ data.drop (columns = ['_unit_id',
 
 data.info()
 
-# print(data.head(3))
+print(data.head(3))
 
 #Cleaning Dataset
 #Analysing the Gender column
@@ -51,37 +49,37 @@ drop_items_idx2 = data[data['gender'] == 'brand'].index
 data.drop (index = drop_items_idx1, inplace = True)
 data.drop (index = drop_items_idx2, inplace = True)
 
-# print(data['gender'].value_counts())
+print(data['gender'].value_counts())
 
 #Handling the missing dataset values by deleting the NaN values(all rows having profile_yn = 'no'
 
-# print ('profile_yn information:\n',data['profile_yn'].value_counts())
+print ('profile_yn information:\n',data['profile_yn'].value_counts())
 
-# print(data[data['profile_yn'] == 'no']['gender'])
+print(data[data['profile_yn'] == 'no']['gender'])
 
 
 drop_items_idx3 = data[data['profile_yn'] == 'no'].index
 
 data.drop (index = drop_items_idx3, inplace = True)
 
-# print ('profile_yn information:\n',data['profile_yn'].value_counts())
+print ('profile_yn information:\n',data['profile_yn'].value_counts())
 data.drop (columns = ['profile_yn','profile_yn:confidence','profile_yn_gold'], inplace = True)
 
 #Checking the data again after some modifications(cleaning/handling missing values)
 
-# print (data['gender'].value_counts())
+print (data['gender'].value_counts())
 
-# print ('++++++++++++++++++++++++++++')
-# data.info()
+print ('++++++++++++++++++++++++++++')
+data.info()
 
 #Checking the Gender Confidence column, selecting only the values with gender confidence = 1 and dropping others
 
-# print ('Total data: ', data.shape)
-# print ('Data with gender confidence < 1: ', data[data['gender:confidence'] < 1].shape)
+print ('Total data: ', data.shape)
+print ('Data with gender confidence < 1: ', data[data['gender:confidence'] < 1].shape)
 
 drop_items_idx4 = data[data['gender:confidence'] < 1].index
 data.drop (index = drop_items_idx4, inplace = True)
-# print (data['gender:confidence'].value_counts())
+print (data['gender:confidence'].value_counts())
 data.drop (columns = ['gender:confidence'], inplace = True)
 
 #Again deleting some less useful features as a part of feature selection
@@ -89,10 +87,10 @@ data.drop (columns = ['gender:confidence'], inplace = True)
 data.drop (columns = ['_golden','_unit_state','_trusted_judgments','gender_gold'], inplace = True)
 
 # Checking the data
-# print (data['gender'].value_counts())
+print (data['gender'].value_counts())
 
-# print ('++++++++++++++++++++++++++')
-# data.info()
+print ('++++++++++++++++++++++++++')
+data.info()
 
 #Now, to differenciate among features, visualize the columns
 
@@ -182,7 +180,7 @@ for tweet in data['text']:
         tweet_vocab[word] += 1
 
 #Printing the most common 30 words
-# print(tweet_vocab.most_common(30))
+print(tweet_vocab.most_common(30))
 
 nltk.download('stopwords')
 
@@ -194,7 +192,7 @@ for i, j in tweet_vocab.items():
         tweet_vocab_reduced[i]=j
 
 #Printing reduced vocabulory
-# print(tweet_vocab_reduced.most_common(30))
+print(tweet_vocab_reduced.most_common(30))
 
 #Text Clean Function
 
@@ -212,7 +210,7 @@ def TextClean(text):
     return text
 
 
-#print(TextClean('This!!@ twit :) is <b>nice</b>'))
+print(TextClean('This!!@ tweet :) is <b>nice</b>'))
 
 #Further normalization using Porter Stemming
 
@@ -224,16 +222,16 @@ def tokenizer(text):
 def porter_tokenizer(text):
     return [porter.stem(word) for word in text.split()]
 
-#print(tokenizer('Hi there, I am loving this, like with a lot of love running bunning shunning cunning fucking harder runs funs guns ponies'))
-#print(porter_tokenizer('Hi there, I am loving this, like with a lot of love running bunning shunning cunning fucking harder runs funs guns ponies'))
+print(tokenizer('Hi there, I am loving this, like with a lot of love running bunning shunning cunning fucking harder runs funs guns ponies'))
+print(porter_tokenizer('Hi there, I am loving this, like with a lot of love running bunning shunning cunning fucking harder runs funs guns ponies'))
 
 #Encoding and Splitting the data set into test and train
 
 
 encoder = LabelEncoder()
 y = encoder.fit_transform(data['gender']) # encode male = 1, female = 0
-# print(data['gender'])
-# print(y)
+print(data['gender'])
+print(y)
 
 data.info()
 
@@ -304,7 +302,7 @@ def MLAlgorithms():
 X = data['text']
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=0, stratify=y)
 #In the code line above, stratify will create a train set with the same class balance than the original set
-# print(X_train.head())
+print(X_train.head())
 
 print("USING TEXT")
 TextAccuracy = MLAlgorithms()
@@ -314,12 +312,11 @@ TextAccuracy = MLAlgorithms()
 
 data.fillna("", inplace = True) # Replacing all NaN with empty strings
 data['text_description'] = data['text'].str.cat(data['description'], sep=' ') #Concatenate the text and descriptions into a new column text_description
-# print(data['text_description'].isnull().value_counts()) #Check if there are any null values in this column
+print(data['text_description'].isnull().value_counts()) #Check if there are any null values in this column
 X = data['text_description']
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=0, stratify=y)
 #In the code line above, stratify will create a train set with the same class balance than the original set
-# X_train.head()
-# print(X_train.isnull().values.any()) # Check if any null values, True if there is at least one.
+print(X_train.isnull().values.any()) # Check if any null values, True if there is at least one.
 print("USING TEXT AND DESCRIPTION")
 TextDescAccuracy = MLAlgorithms()
 
